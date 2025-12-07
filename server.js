@@ -2,95 +2,870 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 
-// Importar datos mock
-const mockLabs = require('./data/mockLabs');
-const mockBookings = require('./data/mockBookings');
+// Datos mock (inline para simplificar deployment)
+const mockLabs = [
+  {
+    id: "WL-001",
+    waysoft_id: "NET-LAB-001",
+    code: "CISCO-ADV",
+    name: "Laboratorio de Redes Avanzadas Cisco",
+    description: "Laboratorio especializado en equipos Cisco para prácticas de routing, switching y configuración avanzada de redes empresariales.",
+    type: "networking",
+    category: "cisco",
+    subcategory: "enterprise_networking",
+    location: {
+      building: "Edificio Tecnológico A",
+      floor: "3",
+      room: "301-A",
+      address: "Carrera 15 #88-64, Bogotá"
+    },
+    capacity: {
+      max_students: 20,
+      max_instructors: 2,
+      workstations: 20,
+      square_meters: 120
+    },
+    equipment: {
+      routers: [
+        { model: "Cisco 2901", quantity: 4, specs: "2GE, 4EHWIC, 2PVDM" },
+        { model: "Cisco 1941", quantity: 2, specs: "2GE, 2EHWIC" }
+      ],
+      switches: [
+        { model: "Cisco 2960X", quantity: 8, specs: "48 ports, PoE+" },
+        { model: "Cisco 3560", quantity: 2, specs: "24 ports, Layer 3" }
+      ],
+      servers: [
+        { model: "Dell R740", quantity: 2, specs: "2x Xeon, 128GB RAM, 4TB SSD" }
+      ]
+    },
+    specifications: {
+      network_speed: "1 Gbps dedicado",
+      internet_access: true,
+      power_backup: true,
+      air_conditioning: true,
+      security: ["control_access", "cameras", "alarm"]
+    },
+    schedule: {
+      monday: [
+        { start: "08:00", end: "12:00", type: "morning" },
+        { start: "14:00", end: "18:00", type: "afternoon" }
+      ],
+      tuesday: [
+        { start: "08:00", end: "12:00", type: "morning" },
+        { start: "14:00", end: "18:00", type: "afternoon" }
+      ],
+      wednesday: [
+        { start: "08:00", end: "12:00", type: "morning" }
+      ],
+      thursday: [
+        { start: "08:00", end: "12:00", type: "morning" },
+        { start: "14:00", end: "18:00", type: "afternoon" }
+      ],
+      friday: [
+        { start: "08:00", end: "12:00", type: "morning" },
+        { start: "14:00", end: "16:00", type: "afternoon" }
+      ],
+      saturday: [
+        { start: "09:00", end: "13:00", type: "morning" }
+      ],
+      sunday: "closed"
+    },
+    pricing: {
+      rates: {
+        hourly: 45.50,
+        half_day: 180.00,
+        full_day: 320.00
+      },
+      currency: "USD",
+      requires_deposit: true,
+      deposit_amount: 100.00,
+      tax_rate: 19
+    },
+    requirements: {
+      min_participants: 5,
+      max_participants: 20,
+      requires_instructor: true,
+      min_age: 18
+    },
+    status: "available",
+    maintenance: {
+      last_maintenance: "2024-01-10",
+      next_maintenance: "2024-04-10"
+    },
+    metadata: {
+      created_at: "2023-01-15T00:00:00Z",
+      updated_at: "2024-01-15T09:30:00Z",
+      rating: 4.7,
+      total_bookings: 124
+    },
+    features: [
+      "cisco_equipment",
+      "enterprise_grade",
+      "high_speed_network",
+      "power_backup",
+      "air_conditioning",
+      "video_conference",
+      "projector"
+    ],
+    images: [
+      "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w-800&auto=format&fit=crop"
+    ]
+  },
+  {
+    id: "WL-002",
+    waysoft_id: "SEC-LAB-001",
+    code: "CYBERSEC-01",
+    name: "Laboratorio de Ciberseguridad",
+    description: "Laboratorio especializado en pruebas de penetración, análisis de malware y seguridad ofensiva/defensiva.",
+    type: "security",
+    category: "cybersecurity",
+    subcategory: "penetration_testing",
+    location: {
+      building: "Edificio Seguridad B",
+      floor: "2",
+      room: "205",
+      address: "Calle 100 #15-20, Bogotá"
+    },
+    capacity: {
+      max_students: 15,
+      max_instructors: 2,
+      workstations: 15,
+      square_meters: 90
+    },
+    equipment: {
+      security_devices: [
+        { model: "Palo Alto PA-220", quantity: 3, specs: "Firewall NGFW" },
+        { model: "FortiGate 60F", quantity: 2, specs: "UTM Firewall" }
+      ],
+      workstations: [
+        { model: "Kali Linux", quantity: 15, specs: "i7, 32GB RAM, 1TB SSD" }
+      ]
+    },
+    specifications: {
+      network_speed: "10 Gbps",
+      internet_access: true,
+      isolated_network: true,
+      power_backup: true,
+      security: ["biometric_access", "cameras_360", "motion_sensors"]
+    },
+    schedule: {
+      monday: [
+        { start: "09:00", end: "13:00", type: "morning" },
+        { start: "15:00", end: "19:00", type: "afternoon" }
+      ],
+      tuesday: [
+        { start: "09:00", end: "13:00", type: "morning" },
+        { start: "15:00", end: "19:00", type: "afternoon" }
+      ],
+      wednesday: [
+        { start: "09:00", end: "13:00", type: "morning" }
+      ],
+      thursday: [
+        { start: "09:00", end: "13:00", type: "morning" },
+        { start: "15:00", end: "19:00", type: "afternoon" }
+      ],
+      friday: [
+        { start: "09:00", end: "13:00", type: "morning" }
+      ],
+      saturday: [
+        { start: "10:00", end: "14:00", type: "morning" }
+      ],
+      sunday: "closed"
+    },
+    pricing: {
+      rates: {
+        hourly: 65.00,
+        half_day: 250.00,
+        full_day: 450.00
+      },
+      currency: "USD",
+      requires_deposit: true,
+      deposit_amount: 200.00,
+      tax_rate: 19
+    },
+    requirements: {
+      min_participants: 3,
+      max_participants: 15,
+      requires_instructor: true,
+      instructor_provided: true,
+      min_age: 21
+    },
+    status: "available",
+    maintenance: {
+      last_maintenance: "2024-01-05",
+      next_maintenance: "2024-02-05"
+    },
+    metadata: {
+      created_at: "2023-03-20T00:00:00Z",
+      updated_at: "2024-01-12T14:20:00Z",
+      rating: 4.9,
+      total_bookings: 89
+    },
+    features: [
+      "penetration_testing",
+      "malware_analysis",
+      "forensic_analysis",
+      "isolated_network",
+      "biometric_access"
+    ],
+    images: [
+      "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop"
+    ]
+  },
+  {
+    id: "WL-003",
+    waysoft_id: "VOIP-LAB-001",
+    code: "TELECOM-01",
+    name: "Laboratorio de Telecomunicaciones VoIP",
+    description: "Laboratorio especializado en sistemas de voz sobre IP, configuración de PBX y calidad de servicio (QoS).",
+    type: "telecommunications",
+    category: "voip",
+    subcategory: "telephony",
+    location: {
+      building: "Edificio Comunicaciones C",
+      floor: "1",
+      room: "110",
+      address: "Avenida Eldorado #68-20, Bogotá"
+    },
+    capacity: {
+      max_students: 12,
+      max_instructors: 1,
+      workstations: 12,
+      square_meters: 80
+    },
+    equipment: {
+      telephony: [
+        { model: "PBX Asterisk", quantity: 2, specs: "32 channels" },
+        { model: "Cisco CUCM", quantity: 1, specs: "50 users license" }
+      ],
+      phones: [
+        { model: "Cisco 7962G", quantity: 12, specs: "IP Phone" }
+      ],
+      gateways: [
+        { model: "Cisco 2901 with VIC", quantity: 2, specs: "Voice gateway" }
+      ]
+    },
+    specifications: {
+      network_speed: "1 Gbps",
+      internet_access: true,
+      phone_lines: 24,
+      power_backup: true
+    },
+    schedule: {
+      monday: [
+        { start: "10:00", end: "14:00", type: "morning" },
+        { start: "16:00", end: "20:00", type: "afternoon" }
+      ],
+      tuesday: [
+        { start: "10:00", end: "14:00", type: "morning" }
+      ],
+      wednesday: [
+        { start: "10:00", end: "14:00", type: "morning" },
+        { start: "16:00", end: "20:00", type: "afternoon" }
+      ],
+      thursday: [
+        { start: "10:00", end: "14:00", type: "morning" }
+      ],
+      friday: [
+        { start: "10:00", end: "14:00", type: "morning" }
+      ],
+      saturday: "closed",
+      sunday: "closed"
+    },
+    pricing: {
+      rates: {
+        hourly: 40.00,
+        half_day: 150.00,
+        full_day: 280.00
+      },
+      currency: "USD",
+      requires_deposit: false,
+      deposit_amount: 0,
+      tax_rate: 19
+    },
+    requirements: {
+      min_participants: 2,
+      max_participants: 12,
+      requires_instructor: false,
+      min_age: 16
+    },
+    status: "maintenance",
+    maintenance: {
+      last_maintenance: "2023-12-20",
+      next_maintenance: "2024-01-25",
+      maintenance_reason: "PBX system upgrade"
+    },
+    metadata: {
+      created_at: "2023-05-10T00:00:00Z",
+      updated_at: "2024-01-15T11:45:00Z",
+      rating: 4.5,
+      total_bookings: 67
+    },
+    features: [
+      "voip_systems",
+      "pbx_configuration",
+      "qos_testing",
+      "call_analysis"
+    ],
+    images: [
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&auto=format&fit=crop"
+    ]
+  },
+  {
+    id: "WL-004",
+    waysoft_id: "WIFI-LAB-001",
+    code: "WIRELESS-01",
+    name: "Laboratorio de Redes Inalámbricas",
+    description: "Laboratorio para diseño, implementación y troubleshooting de redes WiFi empresariales y de campus.",
+    type: "wireless",
+    category: "wifi",
+    subcategory: "enterprise_wifi",
+    location: {
+      building: "Edificio Innovación D",
+      floor: "4",
+      room: "410",
+      address: "Carrera 7 #77-07, Bogotá"
+    },
+    capacity: {
+      max_students: 10,
+      max_instructors: 1,
+      workstations: 10,
+      square_meters: 75
+    },
+    equipment: {
+      access_points: [
+        { model: "Cisco Aironet 2802", quantity: 6, specs: "802.11ac Wave 2" },
+        { model: "Ubiquiti UniFi 6 Pro", quantity: 4, specs: "802.11ax" }
+      ],
+      controllers: [
+        { model: "Cisco 3504 WLC", quantity: 1, specs: "25 AP license" }
+      ],
+      analyzers: [
+        { model: "Ekahau Sidekick 2", quantity: 1, specs: "Spectrum analyzer" }
+      ]
+    },
+    specifications: {
+      network_speed: "2.4 Gbps",
+      internet_access: true,
+      frequency_bands: ["2.4 GHz", "5 GHz", "6 GHz"],
+      power_backup: true
+    },
+    schedule: {
+      monday: [
+        { start: "08:00", end: "12:00", type: "morning" }
+      ],
+      tuesday: [
+        { start: "08:00", end: "12:00", type: "morning" },
+        { start: "14:00", end: "18:00", type: "afternoon" }
+      ],
+      wednesday: [
+        { start: "08:00", end: "12:00", type: "morning" }
+      ],
+      thursday: [
+        { start: "08:00", end: "12:00", type: "morning" },
+        { start: "14:00", end: "18:00", type: "afternoon" }
+      ],
+      friday: [
+        { start: "08:00", end: "12:00", type: "morning" }
+      ],
+      saturday: [
+        { start: "09:00", end: "13:00", type: "morning" }
+      ],
+      sunday: "closed"
+    },
+    pricing: {
+      rates: {
+        hourly: 48.00,
+        half_day: 180.00,
+        full_day: 340.00
+      },
+      currency: "USD",
+      requires_deposit: true,
+      deposit_amount: 80.00,
+      tax_rate: 19
+    },
+    requirements: {
+      min_participants: 2,
+      max_participants: 10,
+      requires_instructor: false,
+      min_age: 18
+    },
+    status: "available",
+    maintenance: {
+      last_maintenance: "2024-01-05",
+      next_maintenance: "2024-04-05"
+    },
+    metadata: {
+      created_at: "2023-07-15T00:00:00Z",
+      updated_at: "2024-01-14T16:20:00Z",
+      rating: 4.6,
+      total_bookings: 45
+    },
+    features: [
+      "wifi_design",
+      "site_survey",
+      "spectrum_analysis",
+      "outdoor_testing",
+      "multiple_vendors"
+    ],
+    images: [
+      "https://images.unsplash.com/photo-1546054451-aa7ff98a6bda?w=800&auto=format&fit=crop"
+    ]
+  }
+];
+
+const mockBookings = [
+  {
+    id: "WS-B001",
+    booking_id: "WAYSOFT-2024-001",
+    external_id: "REFLEX-BKG-001",
+    reference_code: "WS001-REF001",
+    lab: {
+      id: "WL-001",
+      waysoft_id: "NET-LAB-001",
+      name: "Laboratorio de Redes Avanzadas Cisco",
+      code: "CISCO-ADV"
+    },
+    user: {
+      id: "reflex-user-001",
+      waysoft_client_id: "WAYSOFT-CLIENT-001",
+      name: "Juan Pérez Rodríguez",
+      email: "juan.perez@reflex.com",
+      company: "Reflex Tech Solutions"
+    },
+    schedule: {
+      date: "2024-02-15",
+      start_time: "14:00",
+      end_time: "16:00",
+      duration_hours: 2,
+      timezone: "America/Bogota"
+    },
+    purpose: {
+      category: "training",
+      title: "Práctica de configuración OSPF y EIGRP",
+      description: "Sesión práctica para estudiantes de certificación CCNA"
+    },
+    participants: {
+      total: 8,
+      instructors: 1,
+      students: 7
+    },
+    pricing: {
+      base_rate: 45.50,
+      hours: 2,
+      subtotal: 91.00,
+      taxes: {
+        percentage: 19,
+        amount: 17.29
+      },
+      total_amount: 108.29,
+      currency: "USD",
+      payment_status: "paid",
+      payment_method: "credit_card"
+    },
+    status: "confirmed",
+    status_history: [
+      {
+        status: "requested",
+        timestamp: "2024-01-10T09:30:00Z",
+        notes: "Reserva solicitada"
+      },
+      {
+        status: "confirmed",
+        timestamp: "2024-01-10T10:15:00Z",
+        notes: "Pago confirmado"
+      }
+    ],
+    cancellation_policy: {
+      allowed: true,
+      deadline: "2024-02-13T14:00:00Z",
+      refund_percentage: 80
+    }
+  },
+  {
+    id: "WS-B002",
+    booking_id: "WAYSOFT-2024-002",
+    external_id: "REFLEX-BKG-002",
+    reference_code: "WS002-REF002",
+    lab: {
+      id: "WL-002",
+      waysoft_id: "SEC-LAB-001",
+      name: "Laboratorio de Ciberseguridad",
+      code: "CYBERSEC-01"
+    },
+    user: {
+      id: "reflex-user-002",
+      waysoft_client_id: "WAYSOFT-CLIENT-002",
+      name: "María García López",
+      email: "maria.garcia@reflex.com",
+      company: "Reflex Security Labs"
+    },
+    schedule: {
+      date: "2024-02-20",
+      start_time: "15:00",
+      end_time: "18:00",
+      duration_hours: 3,
+      timezone: "America/Bogota"
+    },
+    purpose: {
+      category: "workshop",
+      title: "Taller de Pentesting Básico",
+      description: "Introducción a técnicas de pruebas de penetración"
+    },
+    participants: {
+      total: 12,
+      instructors: 1,
+      students: 11
+    },
+    pricing: {
+      base_rate: 65.00,
+      hours: 3,
+      subtotal: 195.00,
+      taxes: {
+        percentage: 19,
+        amount: 37.05
+      },
+      total_amount: 232.05,
+      currency: "USD",
+      payment_status: "pending",
+      payment_method: "bank_transfer"
+    },
+    status: "pending_payment",
+    status_history: [
+      {
+        status: "requested",
+        timestamp: "2024-01-12T14:20:00Z",
+        notes: "Reserva solicitada"
+      },
+      {
+        status: "pending_payment",
+        timestamp: "2024-01-12T14:25:00Z",
+        notes: "Esperando pago"
+      }
+    ],
+    cancellation_policy: {
+      allowed: true,
+      deadline: "2024-02-17T15:00:00Z",
+      refund_percentage: 70
+    }
+  },
+  {
+    id: "WS-B003",
+    booking_id: "WAYSOFT-2024-003",
+    external_id: "REFLEX-BKG-003",
+    reference_code: "WS003-REF003",
+    lab: {
+      id: "WL-001",
+      waysoft_id: "NET-LAB-001",
+      name: "Laboratorio de Redes Avanzadas Cisco",
+      code: "CISCO-ADV"
+    },
+    user: {
+      id: "reflex-user-003",
+      waysoft_client_id: "WAYSOFT-CLIENT-003",
+      name: "Carlos Rodríguez Vargas",
+      email: "carlos.rodriguez@reflex.com",
+      company: "Reflex Networking Academy"
+    },
+    schedule: {
+      date: "2024-01-25",
+      start_time: "19:00",
+      end_time: "22:00",
+      duration_hours: 3,
+      timezone: "America/Bogota"
+    },
+    purpose: {
+      category: "certification",
+      title: "Sesión de Práctica para Examen CCNA",
+      description: "Sesión intensiva de práctica para examen CCNA 200-301"
+    },
+    participants: {
+      total: 15,
+      instructors: 1,
+      students: 14
+    },
+    pricing: {
+      base_rate: 45.50,
+      hours: 3,
+      subtotal: 136.50,
+      taxes: {
+        percentage: 19,
+        amount: 25.94
+      },
+      total_amount: 162.44,
+      currency: "USD",
+      payment_status: "paid",
+      payment_method: "paypal"
+    },
+    status: "completed",
+    status_history: [
+      {
+        status: "requested",
+        timestamp: "2023-12-20T11:15:00Z",
+        notes: "Reserva solicitada"
+      },
+      {
+        status: "confirmed",
+        timestamp: "2023-12-20T11:30:00Z",
+        notes: "Pago confirmado"
+      },
+      {
+        status: "completed",
+        timestamp: "2024-01-25T22:00:00Z",
+        notes: "Sesión finalizada"
+      }
+    ],
+    cancellation_policy: {
+      allowed: false,
+      deadline: "2024-01-23T19:00:00Z",
+      refund_percentage: 0
+    }
+  }
+];
 
 const app = express();
-const PORT = process.env.PORT || 4001;
+const PORT = process.env.PORT || 4000;
+const API_KEY = process.env.API_KEY || 'waysoft-mock-api-key-2024';
 
-// Middleware
+// ======================
+// CONFIGURACIÓN CORS PARA INTERNET
+// ======================
+
+// CORS completamente abierto para Internet
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGIN || '*',
-  methods: ['GET'],
-  allowedHeaders: ['Content-Type', 'x-api-key']
+  origin: '*', // Permitir desde cualquier origen
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'x-api-key', 'Authorization', 'Accept'],
+  credentials: false,
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 }));
-app.use(express.json());
 
-// Middleware de autenticación simple
-const authMiddleware = (req, res, next) => {
-  // Endpoints públicos (sin auth)
-  const publicEndpoints = ['/health', '/public/test', '/'];
-  if (publicEndpoints.includes(req.path)) {
+// Headers de seguridad
+app.use((req, res, next) => {
+  // Headers para APIs públicas en Internet
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, x-api-key, Authorization');
+  res.header('X-Powered-By', 'Waysoft Mock API');
+  res.header('X-Version', '1.0.0');
+  res.header('X-Environment', process.env.NODE_ENV || 'production');
+  
+  // Cache control para API
+  res.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.header('Pragma', 'no-cache');
+  res.header('Expires', '0');
+  
+  next();
+});
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// ======================
+// MIDDLEWARE DE AUTENTICACIÓN
+// ======================
+
+const authenticateApiKey = (req, res, next) => {
+  // Endpoints públicos que no requieren autenticación
+  const publicEndpoints = ['/', '/health', '/public', '/public/*', '/api-docs', '/status'];
+  
+  // Verificar si es endpoint público
+  const isPublicEndpoint = publicEndpoints.some(endpoint => {
+    if (endpoint.endsWith('/*')) {
+      const basePath = endpoint.replace('/*', '');
+      return req.path.startsWith(basePath);
+    }
+    return req.path === endpoint;
+  });
+  
+  if (isPublicEndpoint) {
     return next();
   }
   
-  const apiKey = req.headers['x-api-key'];
+  // Obtener API Key de diferentes fuentes
+  const apiKey = req.headers['x-api-key'] || 
+                 req.headers['authorization']?.replace('Bearer ', '') || 
+                 req.query.api_key;
   
-  if (!apiKey || apiKey !== process.env.API_KEY) {
+  if (!apiKey) {
     return res.status(401).json({
-      error: "Unauthorized",
-      message: "API Key requerida",
+      success: false,
+      error: "API Key requerida",
+      message: "Incluye el header: x-api-key",
+      code: "API_KEY_REQUIRED",
+      docs: `${req.protocol}://${req.get('host')}/api-docs`
+    });
+  }
+  
+  if (apiKey !== API_KEY) {
+    return res.status(403).json({
+      success: false,
+      error: "API Key inválida",
+      message: "La API Key proporcionada no es válida",
       code: "INVALID_API_KEY",
-      hint: "Usa el header: x-api-key: waysoft-consultas-only-2024"
+      hint: "Usa: waysoft-mock-api-key-2024"
     });
   }
   
   next();
 };
 
-// Aplicar auth a todas las rutas (excepto públicas)
-app.use(authMiddleware);
+// Aplicar autenticación a todas las rutas excepto públicas
+app.use(authenticateApiKey);
 
 // ======================
-// ENDPOINTS DE CONSULTA
+// ENDPOINTS PÚBLICOS (SIN AUTENTICACIÓN)
 // ======================
 
-// 1. Health Check (público)
-app.get('/health', (req, res) => {
-  res.json({
-    service: "Waysoft Query API",
-    status: "running",
-    version: "1.0.0",
-    timestamp: new Date().toISOString(),
-    endpoints: {
-      labs: {
-        all: "/labs",
-        by_id: "/labs/:id",
-        schedule: "/labs/:id/schedule",
-        availability: "/availability/:labId",
-        search: "/search/labs?q=term",
-        by_category: "/categories/:category/labs"
-      },
-      bookings: {
-        all: "/bookings",
-        by_id: "/bookings/:bookingId",
-        by_user: "/users/:userId/bookings"
-      },
-      stats: "/stats",
-      public_test: "/public/test"
-    }
-  });
-});
-
-// 2. Página de inicio (pública)
+// Página principal
 app.get('/', (req, res) => {
   res.json({
-    message: "Waysoft Mock API - Solo Consultas",
-    description: "API de simulación para integración con Waysoft desde Reflex",
-    usage: {
-      auth: "Incluye header: x-api-key: waysoft-consultas-only-2024",
-      examples: {
-        get_labs: "GET /labs",
-        get_lab: "GET /labs/WL-001",
-        get_bookings: "GET /bookings",
-        search: "GET /search/labs?q=cisco"
+    message: "🎯 Waysoft Mock API - Servicio de Simulación",
+    description: "API mock para pruebas de integración con Waysoft desde Reflex",
+    version: "1.0.0",
+    environment: process.env.NODE_ENV || 'production',
+    endpoints: {
+      public: {
+        health: "/health",
+        status: "/status",
+        api_docs: "/api-docs",
+        test: "/public/test"
+      },
+      protected: {
+        labs: "/labs",
+        bookings: "/bookings",
+        availability: "/availability/:labId"
       }
+    },
+    usage: {
+      api_key: "waysoft-mock-api-key-2024",
+      example: "curl -H 'x-api-key: waysoft-mock-api-key-2024' https://tu-api.com/labs"
+    },
+    source: "https://github.com/dfmarinl/Integracion-",
+    deployed_at: new Date().toISOString()
+  });
+});
+
+// Health Check
+app.get('/health', (req, res) => {
+  res.json({
+    status: "healthy",
+    service: "Waysoft Mock API",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    environment: process.env.NODE_ENV || 'production'
+  });
+});
+
+// Status del servicio
+app.get('/status', (req, res) => {
+  res.json({
+    status: "operational",
+    service: "Waysoft Mock API",
+    version: "1.0.0",
+    data: {
+      labs: mockLabs.length,
+      bookings: mockBookings.length,
+      available_labs: mockLabs.filter(l => l.status === 'available').length
+    },
+    last_updated: new Date().toISOString()
+  });
+});
+
+// Documentación de la API
+app.get('/api-docs', (req, res) => {
+  res.json({
+    title: "Waysoft Mock API Documentation",
+    description: "API para simular integración con Waysoft - Solo consultas GET",
+    base_url: `${req.protocol}://${req.get('host')}`,
+    authentication: {
+      method: "API Key",
+      header: "x-api-key",
+      value: "waysoft-mock-api-key-2024"
+    },
+    endpoints: [
+      {
+        method: "GET",
+        path: "/labs",
+        description: "Obtener todos los laboratorios",
+        parameters: [
+          { name: "status", type: "query", example: "available" },
+          { name: "category", type: "query", example: "cisco" },
+          { name: "page", type: "query", example: "1" },
+          { name: "limit", type: "query", example: "10" }
+        ]
+      },
+      {
+        method: "GET",
+        path: "/labs/:id",
+        description: "Obtener un laboratorio específico",
+        parameters: [
+          { name: "id", type: "path", example: "WL-001" }
+        ]
+      },
+      {
+        method: "GET",
+        path: "/bookings",
+        description: "Obtener todas las reservas",
+        parameters: [
+          { name: "userId", type: "query", example: "reflex-user-001" },
+          { name: "status", type: "query", example: "confirmed" }
+        ]
+      },
+      {
+        method: "GET",
+        path: "/availability/:labId",
+        description: "Verificar disponibilidad de laboratorio",
+        parameters: [
+          { name: "labId", type: "path", example: "WL-001" },
+          { name: "date", type: "query", example: "2024-02-15" },
+          { name: "startTime", type: "query", example: "14:00" },
+          { name: "endTime", type: "query", example: "16:00" }
+        ]
+      }
+    ],
+    examples: {
+      curl: "curl -H 'x-api-key: waysoft-mock-api-key-2024' https://tu-api.com/labs",
+      javascript: `fetch('https://tu-api.com/labs', {
+  headers: { 'x-api-key': 'waysoft-mock-api-key-2024' }
+})`,
+      python: `import requests
+headers = {'x-api-key': 'waysoft-mock-api-key-2024'}
+response = requests.get('https://tu-api.com/labs', headers=headers)`
     }
   });
 });
 
-// 3. Obtener TODOS los laboratorios
+// Endpoint de prueba pública
+app.get('/public/test', (req, res) => {
+  res.json({
+    message: "✅ Waysoft Mock API funcionando correctamente",
+    test: "Puedes usar este endpoint sin autenticación",
+    data: {
+      sample_lab: {
+        id: mockLabs[0]?.id,
+        name: mockLabs[0]?.name,
+        status: mockLabs[0]?.status
+      },
+      total_labs: mockLabs.length,
+      total_bookings: mockBookings.length
+    },
+    next_steps: [
+      "1. Usa el API Key: waysoft-mock-api-key-2024",
+      "2. Prueba el endpoint: /labs",
+      "3. Consulta la documentación: /api-docs"
+    ]
+  });
+});
+
+// ======================
+// ENDPOINTS PROTEGIDOS (REQUIEREN API KEY)
+// ======================
+
+// 1. Obtener TODOS los laboratorios
 app.get('/labs', (req, res) => {
   try {
     const { 
@@ -106,32 +881,27 @@ app.get('/labs', (req, res) => {
     
     let labs = [...mockLabs];
     
-    // Filtrar por estado
+    // Aplicar filtros
     if (status) {
       labs = labs.filter(lab => lab.status === status);
     }
     
-    // Filtrar por categoría
     if (category) {
       labs = labs.filter(lab => lab.category === category);
     }
     
-    // Filtrar por tipo
     if (type) {
       labs = labs.filter(lab => lab.type === type);
     }
     
-    // Filtrar por capacidad mínima
     if (min_capacity) {
       labs = labs.filter(lab => lab.capacity.max_students >= parseInt(min_capacity));
     }
     
-    // Filtrar por capacidad máxima
     if (max_capacity) {
       labs = labs.filter(lab => lab.capacity.max_students <= parseInt(max_capacity));
     }
     
-    // Filtrar por características
     if (features) {
       const featureList = features.split(',');
       labs = labs.filter(lab => 
@@ -193,9 +963,6 @@ app.get('/labs', (req, res) => {
         }
       }
       
-      // Calcular precio formateado
-      const formattedPrice = `${lab.pricing.currency === 'USD' ? '$' : '€'}${lab.pricing.rates.hourly}/hora`;
-      
       return {
         id: lab.id,
         waysoft_id: lab.waysoft_id,
@@ -209,13 +976,13 @@ app.get('/labs', (req, res) => {
         pricing: {
           hourly: lab.pricing.rates.hourly,
           currency: lab.pricing.currency,
-          formatted: formattedPrice
+          formatted: `${lab.pricing.currency === 'USD' ? '$' : '€'}${lab.pricing.rates.hourly}/h`
         },
         current_availability: {
           is_available: isCurrentlyAvailable && lab.status === 'available',
           next_available: nextAvailable
         },
-        features: lab.features.slice(0, 5), // Primeras 5 características
+        features: lab.features.slice(0, 5),
         images: lab.images,
         metadata: {
           rating: lab.metadata.rating,
@@ -231,23 +998,6 @@ app.get('/labs', (req, res) => {
     const endIndex = pageNum * limitNum;
     const paginatedLabs = labsWithAvailability.slice(startIndex, endIndex);
     
-    // Calcular estadísticas de filtros
-    const stats = {
-      total: labs.length,
-      by_status: labs.reduce((acc, lab) => {
-        acc[lab.status] = (acc[lab.status] || 0) + 1;
-        return acc;
-      }, {}),
-      by_category: labs.reduce((acc, lab) => {
-        acc[lab.category] = (acc[lab.category] || 0) + 1;
-        return acc;
-      }, {}),
-      average_capacity: labs.length > 0 ? 
-        labs.reduce((sum, lab) => sum + lab.capacity.max_students, 0) / labs.length : 0,
-      average_price: labs.length > 0 ? 
-        labs.reduce((sum, lab) => sum + lab.pricing.rates.hourly, 0) / labs.length : 0
-    };
-    
     res.json({
       success: true,
       data: paginatedLabs,
@@ -259,7 +1009,6 @@ app.get('/labs', (req, res) => {
         has_next_page: endIndex < labs.length,
         has_prev_page: startIndex > 0
       },
-      statistics: stats,
       filters_applied: {
         status,
         category,
@@ -274,13 +1023,12 @@ app.get('/labs', (req, res) => {
     console.error('Error en /labs:', error);
     res.status(500).json({
       success: false,
-      error: "Error interno del servidor",
-      message: error.message
+      error: "Error interno del servidor"
     });
   }
 });
 
-// 4. Obtener un laboratorio por ID
+// 2. Obtener un laboratorio por ID
 app.get('/labs/:id', (req, res) => {
   try {
     const { id } = req.params;
@@ -307,7 +1055,7 @@ app.get('/labs/:id', (req, res) => {
         new Date(booking.schedule.date) > now &&
         ['confirmed', 'pending_payment'].includes(booking.status)
       )
-      .slice(0, 5)
+      .slice(0, 3)
       .map(booking => ({
         date: booking.schedule.date,
         start_time: booking.schedule.start_time,
@@ -321,7 +1069,7 @@ app.get('/labs/:id', (req, res) => {
         l.id !== lab.id && 
         (l.category === lab.category || l.type === lab.type)
       )
-      .slice(0, 3)
+      .slice(0, 2)
       .map(l => ({
         id: l.id,
         name: l.name,
@@ -349,7 +1097,7 @@ app.get('/labs/:id', (req, res) => {
   }
 });
 
-// 5. Verificar disponibilidad
+// 3. Verificar disponibilidad
 app.get('/availability/:labId', (req, res) => {
   try {
     const { labId } = req.params;
@@ -393,8 +1141,8 @@ app.get('/availability/:labId', (req, res) => {
         current_availability: isCurrentlyAvailable && lab.status === 'available',
         schedule_today: lab.schedule[currentDay] || 'closed',
         message: isCurrentlyAvailable ? 
-          "Laboratorio disponible ahora" : 
-          `Laboratorio ${lab.status === 'available' ? 'cerrado ahora' : lab.status}`
+          "✅ Laboratorio disponible ahora" : 
+          `❌ Laboratorio ${lab.status === 'available' ? 'cerrado ahora' : lab.status}`
       });
     }
     
@@ -410,7 +1158,8 @@ app.get('/availability/:labId', (req, res) => {
         success: true,
         available: false,
         reason: `Laboratorio cerrado los ${dayOfWeek}`,
-        next_available: getNextAvailableDay(lab, dayOfWeek)
+        lab_name: lab.name,
+        lab_status: lab.status
       });
     }
     
@@ -428,6 +1177,7 @@ app.get('/availability/:labId', (req, res) => {
         success: true,
         available: false,
         reason: "Horario fuera del horario de operación",
+        lab_name: lab.name,
         available_slots: schedule.map(s => `${s.start}-${s.end}`)
       });
     }
@@ -478,7 +1228,7 @@ app.get('/availability/:labId', (req, res) => {
   }
 });
 
-// 6. Obtener horarios de un laboratorio
+// 4. Obtener horarios de un laboratorio
 app.get('/labs/:id/schedule', (req, res) => {
   try {
     const { id } = req.params;
@@ -518,7 +1268,7 @@ app.get('/labs/:id/schedule', (req, res) => {
   }
 });
 
-// 7. Obtener todas las reservas
+// 5. Obtener todas las reservas
 app.get('/bookings', (req, res) => {
   try {
     const { 
@@ -533,27 +1283,23 @@ app.get('/bookings', (req, res) => {
     
     let bookings = [...mockBookings];
     
-    // Filtrar por usuario
+    // Aplicar filtros
     if (userId) {
       bookings = bookings.filter(b => b.user.id === userId);
     }
     
-    // Filtrar por estado
     if (status) {
       bookings = bookings.filter(b => b.status === status);
     }
     
-    // Filtrar por laboratorio
     if (labId) {
       bookings = bookings.filter(b => b.lab.id === labId || b.lab.waysoft_id === labId);
     }
     
-    // Filtrar por fecha de inicio
     if (start_date) {
       bookings = bookings.filter(b => b.schedule.date >= start_date);
     }
     
-    // Filtrar por fecha de fin
     if (end_date) {
       bookings = bookings.filter(b => b.schedule.date <= end_date);
     }
@@ -598,22 +1344,6 @@ app.get('/bookings', (req, res) => {
     const endIndex = pageNum * limitNum;
     const paginatedBookings = formattedBookings.slice(startIndex, endIndex);
     
-    // Estadísticas
-    const stats = {
-      total: bookings.length,
-      by_status: bookings.reduce((acc, b) => {
-        acc[b.status] = (acc[b.status] || 0) + 1;
-        return acc;
-      }, {}),
-      by_lab: bookings.reduce((acc, b) => {
-        acc[b.lab.name] = (acc[b.lab.name] || 0) + 1;
-        return acc;
-      }, {}),
-      total_revenue: bookings
-        .filter(b => b.pricing.payment_status === 'paid')
-        .reduce((sum, b) => sum + b.pricing.total_amount, 0)
-    };
-    
     res.json({
       success: true,
       data: paginatedBookings,
@@ -625,7 +1355,6 @@ app.get('/bookings', (req, res) => {
         has_next_page: endIndex < bookings.length,
         has_prev_page: startIndex > 0
       },
-      statistics: stats,
       filters_applied: {
         userId,
         status,
@@ -644,16 +1373,14 @@ app.get('/bookings', (req, res) => {
   }
 });
 
-// 8. Obtener reservas de un usuario específico
+// 6. Obtener reservas de un usuario específico
 app.get('/users/:userId/bookings', (req, res) => {
   try {
     const { userId } = req.params;
     const { 
       status, 
       include_past = 'true',
-      include_upcoming = 'true',
-      page = 1,
-      limit = 10
+      include_upcoming = 'true'
     } = req.query;
     
     // Filtrar reservas del usuario
@@ -710,13 +1437,6 @@ app.get('/users/:userId/bookings', (req, res) => {
       is_upcoming: new Date(booking.schedule.date + 'T' + booking.schedule.start_time) > now
     }));
     
-    // Paginación
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
-    const startIndex = (pageNum - 1) * limitNum;
-    const endIndex = pageNum * limitNum;
-    const paginatedBookings = formattedBookings.slice(startIndex, endIndex);
-    
     // Estadísticas del usuario
     const userStats = {
       total_bookings: userBookings.length,
@@ -728,27 +1448,14 @@ app.get('/users/:userId/bookings', (req, res) => {
       }, {}),
       total_spent: userBookings
         .filter(b => b.pricing.payment_status === 'paid')
-        .reduce((sum, b) => sum + b.pricing.total_amount, 0),
-      favorite_lab: userBookings.length > 0 ? 
-        userBookings.reduce((max, b) => {
-          const labCount = userBookings.filter(b2 => b2.lab.id === b.lab.id).length;
-          return labCount > max.count ? { lab: b.lab.name, count: labCount } : max;
-        }, { lab: null, count: 0 }).lab : null
+        .reduce((sum, b) => sum + b.pricing.total_amount, 0)
     };
     
     res.json({
       success: true,
       userId,
-      data: paginatedBookings,
+      data: formattedBookings,
       statistics: userStats,
-      pagination: {
-        page: pageNum,
-        limit: limitNum,
-        total_items: filteredBookings.length,
-        total_pages: Math.ceil(filteredBookings.length / limitNum),
-        has_next_page: endIndex < filteredBookings.length,
-        has_prev_page: startIndex > 0
-      },
       filters: {
         include_past,
         include_upcoming,
@@ -765,7 +1472,7 @@ app.get('/users/:userId/bookings', (req, res) => {
   }
 });
 
-// 9. Obtener una reserva específica
+// 7. Obtener una reserva específica
 app.get('/bookings/:bookingId', (req, res) => {
   try {
     const { bookingId } = req.params;
@@ -792,7 +1499,6 @@ app.get('/bookings/:bookingId', (req, res) => {
         lab_details: lab ? {
           name: lab.name,
           location: lab.location,
-          contact: lab.contact,
           images: lab.images
         } : null
       }
@@ -807,7 +1513,7 @@ app.get('/bookings/:bookingId', (req, res) => {
   }
 });
 
-// 10. Buscar laboratorios por término
+// 8. Buscar laboratorios
 app.get('/search/labs', (req, res) => {
   try {
     const { q } = req.query;
@@ -828,9 +1534,7 @@ app.get('/search/labs', (req, res) => {
       lab.description.toLowerCase().includes(searchTerm) ||
       lab.category.toLowerCase().includes(searchTerm) ||
       lab.type.toLowerCase().includes(searchTerm) ||
-      lab.features.some(feature => feature.toLowerCase().includes(searchTerm)) ||
-      lab.equipment?.routers?.some(r => r.model.toLowerCase().includes(searchTerm)) ||
-      lab.equipment?.switches?.some(s => s.model.toLowerCase().includes(searchTerm))
+      lab.features.some(feature => feature.toLowerCase().includes(searchTerm))
     );
     
     // Formatear resultados
@@ -842,8 +1546,7 @@ app.get('/search/labs', (req, res) => {
       status: lab.status,
       capacity: lab.capacity.max_students,
       hourly_rate: lab.pricing.rates.hourly,
-      currency: lab.pricing.currency,
-      match_reason: getMatchReason(lab, searchTerm)
+      currency: lab.pricing.currency
     }));
     
     res.json({
@@ -862,64 +1565,31 @@ app.get('/search/labs', (req, res) => {
   }
 });
 
-// 11. Obtener estadísticas (solo lectura)
+// 9. Estadísticas
 app.get('/stats', (req, res) => {
   try {
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-    
-    // Reservas del mes actual
-    const monthlyBookings = mockBookings.filter(b => {
-      const bookingDate = new Date(b.schedule.date);
-      return bookingDate.getMonth() === currentMonth && 
-             bookingDate.getFullYear() === currentYear;
-    });
-    
     const stats = {
-      // Laboratorios
       labs: {
         total: mockLabs.length,
         available: mockLabs.filter(l => l.status === 'available').length,
         in_maintenance: mockLabs.filter(l => l.status === 'maintenance').length,
-        reserved: mockLabs.filter(l => l.status === 'reserved').length,
         by_category: mockLabs.reduce((acc, lab) => {
           acc[lab.category] = (acc[lab.category] || 0) + 1;
           return acc;
         }, {})
       },
-      
-      // Reservas
       bookings: {
         total: mockBookings.length,
-        monthly: monthlyBookings.length,
         by_status: mockBookings.reduce((acc, b) => {
           acc[b.status] = (acc[b.status] || 0) + 1;
           return acc;
         }, {}),
-        by_month: getBookingsByMonth(),
-        revenue: {
-          total: mockBookings
-            .filter(b => b.pricing.payment_status === 'paid')
-            .reduce((sum, b) => sum + b.pricing.total_amount, 0),
-          monthly: monthlyBookings
-            .filter(b => b.pricing.payment_status === 'paid')
-            .reduce((sum, b) => sum + b.pricing.total_amount, 0)
-        }
+        revenue: mockBookings
+          .filter(b => b.pricing.payment_status === 'paid')
+          .reduce((sum, b) => sum + b.pricing.total_amount, 0)
       },
-      
-      // Usuarios (simulado)
-      users: {
-        total_clients: 5, // De los datos mock
-        active_clients: 3,
-        corporate_clients: 4,
-        academic_clients: 1
-      },
-      
-      // Capacidad
       capacity: {
         total_seats: mockLabs.reduce((sum, lab) => sum + lab.capacity.max_students, 0),
-        average_utilization: calculateUtilization(),
         most_popular_lab: mockBookings.length > 0 ? 
           mockBookings.reduce((max, b) => {
             const labCount = mockBookings.filter(b2 => b2.lab.id === b.lab.id).length;
@@ -943,7 +1613,7 @@ app.get('/stats', (req, res) => {
   }
 });
 
-// 12. Obtener laboratorios por categoría
+// 10. Obtener laboratorios por categoría
 app.get('/categories/:category/labs', (req, res) => {
   try {
     const { category } = req.params;
@@ -982,60 +1652,9 @@ app.get('/categories/:category/labs', (req, res) => {
   }
 });
 
-// 13. Endpoint de prueba simple (sin auth)
-app.get('/public/test', (req, res) => {
-  res.json({
-    message: "Waysoft Mock API - Solo Consultas",
-    description: "API de simulación para pruebas de integración",
-    endpoints_available: [
-      "GET /health - Estado del servicio",
-      "GET /labs - Todos los laboratorios",
-      "GET /labs/:id - Laboratorio específico",
-      "GET /bookings - Todas las reservas",
-      "GET /users/:userId/bookings - Reservas de usuario",
-      "GET /search/labs?q=term - Buscar laboratorios",
-      "GET /stats - Estadísticas",
-      "GET /categories/:category/labs - Laboratorios por categoría"
-    ],
-    example_requests: [
-      "curl -H 'x-api-key: waysoft-consultas-only-2024' http://localhost:4001/labs",
-      "curl -H 'x-api-key: waysoft-consultas-only-2024' http://localhost:4001/labs/WL-001",
-      "curl -H 'x-api-key: waysoft-consultas-only-2024' http://localhost:4001/search/labs?q=cisco"
-    ],
-    test_data: {
-      labs_count: mockLabs.length,
-      bookings_count: mockBookings.length,
-      sample_lab: mockLabs[0] ? {
-        id: mockLabs[0].id,
-        name: mockLabs[0].name,
-        status: mockLabs[0].status
-      } : null
-    }
-  });
-});
-
 // ======================
 // FUNCIONES AUXILIARES
 // ======================
-
-function getNextAvailableDay(lab, currentDay) {
-  const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-  const currentIndex = days.indexOf(currentDay);
-  
-  for (let i = 1; i <= 7; i++) {
-    const nextIndex = (currentIndex + i) % 7;
-    const nextDay = days[nextIndex];
-    
-    if (lab.schedule[nextDay] && lab.schedule[nextDay] !== 'closed') {
-      return {
-        day: nextDay,
-        schedule: lab.schedule[nextDay].map(s => `${s.start}-${s.end}`)
-      };
-    }
-  }
-  
-  return null;
-}
 
 function getNext7DaysSchedule(lab) {
   const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -1061,63 +1680,23 @@ function getNext7DaysSchedule(lab) {
   return schedule;
 }
 
-function getMatchReason(lab, searchTerm) {
-  if (lab.name.toLowerCase().includes(searchTerm)) return 'name';
-  if (lab.description.toLowerCase().includes(searchTerm)) return 'description';
-  if (lab.category.toLowerCase().includes(searchTerm)) return 'category';
-  if (lab.type.toLowerCase().includes(searchTerm)) return 'type';
-  if (lab.features.some(f => f.toLowerCase().includes(searchTerm))) return 'feature';
-  if (lab.equipment?.routers?.some(r => r.model.toLowerCase().includes(searchTerm))) return 'equipment';
-  if (lab.equipment?.switches?.some(s => s.model.toLowerCase().includes(searchTerm))) return 'equipment';
-  return 'other';
-}
-
-function getBookingsByMonth() {
-  const monthlyData = {};
-  
-  mockBookings.forEach(booking => {
-    const date = new Date(booking.schedule.date);
-    const monthYear = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
-    
-    if (!monthlyData[monthYear]) {
-      monthlyData[monthYear] = 0;
-    }
-    monthlyData[monthYear]++;
-  });
-  
-  return monthlyData;
-}
-
-function calculateUtilization() {
-  // Simulación de utilización
-  const totalHours = mockLabs.reduce((sum, lab) => {
-    let weeklyHours = 0;
-    Object.values(lab.schedule).forEach(schedule => {
-      if (schedule !== 'closed') {
-        schedule.forEach(slot => {
-          const start = parseInt(slot.start.split(':')[0]);
-          const end = parseInt(slot.end.split(':')[0]);
-          weeklyHours += (end - start);
-        });
-      }
-    });
-    return sum + weeklyHours * 52; // Horas anuales
-  }, 0);
-  
-  const bookedHours = mockBookings
-    .filter(b => ['confirmed', 'completed'].includes(b.status))
-    .reduce((sum, b) => sum + b.schedule.duration_hours, 0);
-  
-  return totalHours > 0 ? (bookedHours / totalHours * 100).toFixed(1) : 0;
-}
+// ======================
+// MANEJO DE ERRORES
+// ======================
 
 // 404 Handler
 app.use('*', (req, res) => {
   res.status(404).json({
+    success: false,
     error: "Endpoint no encontrado",
     path: req.originalUrl,
-    availableEndpoints: [
+    method: req.method,
+    available_endpoints: [
+      "GET /",
       "GET /health",
+      "GET /status",
+      "GET /api-docs",
+      "GET /public/test",
       "GET /labs",
       "GET /labs/:id",
       "GET /labs/:id/schedule",
@@ -1127,10 +1706,9 @@ app.use('*', (req, res) => {
       "GET /bookings/:bookingId",
       "GET /search/labs",
       "GET /stats",
-      "GET /categories/:category/labs",
-      "GET /public/test"
+      "GET /categories/:category/labs"
     ],
-    documentation: "Visita /public/test para más información"
+    documentation: `${req.protocol}://${req.get('host')}/api-docs`
   });
 });
 
@@ -1142,18 +1720,44 @@ app.use((err, req, res, next) => {
     success: false,
     error: "Error interno del servidor",
     message: process.env.NODE_ENV === 'development' ? err.message : undefined,
-    request_id: Date.now().toString(36)
+    request_id: Date.now().toString(36),
+    timestamp: new Date().toISOString()
   });
 });
 
-// Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`✅ Waysoft Query API corriendo en http://localhost:${PORT}`);
-  console.log(`🔑 API Key: ${process.env.API_KEY}`);
-  console.log(`📡 Health Check: http://localhost:${PORT}/health`);
-  console.log(`📚 Documentación: http://localhost:${PORT}/public/test`);
-  console.log(`🎯 Datos disponibles:`);
-  console.log(`   - Laboratorios: ${mockLabs.length}`);
-  console.log(`   - Reservas: ${mockBookings.length}`);
-  console.log(`🌍 Entorno: ${process.env.NODE_ENV || 'development'}`);
+// ======================
+// INICIAR SERVIDOR
+// ======================
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`
+╔══════════════════════════════════════════════════════════╗
+║           🚀 WAYSOFT MOCK API - DESPLEGADO              ║
+╠══════════════════════════════════════════════════════════╣
+║  Puerto:         ${PORT}${' '.repeat(38 - PORT.toString().length)}║
+║  Entorno:        ${process.env.NODE_ENV || 'production'}${' '.repeat(38 - (process.env.NODE_ENV || 'production').length)}║
+║  CORS:           Activado para Internet                 ║
+║  API Key:        waysoft-mock-api-key-2024              ║
+╠══════════════════════════════════════════════════════════╣
+║  📊 Datos disponibles:                                  ║
+║    • Laboratorios: ${mockLabs.length}${' '.repeat(33 - mockLabs.length.toString().length)}║
+║    • Reservas:    ${mockBookings.length}${' '.repeat(33 - mockBookings.length.toString().length)}║
+╠══════════════════════════════════════════════════════════╣
+║  🌐 Endpoints públicos:                                 ║
+║    • /           - Página principal                     ║
+║    • /health     - Health check                         ║
+║    • /status     - Estado del servicio                  ║
+║    • /api-docs   - Documentación                        ║
+║    • /public/test- Prueba sin autenticación             ║
+╠══════════════════════════════════════════════════════════╣
+║  🔐 Endpoints protegidos (requieren API Key):           ║
+║    • /labs       - Todos los laboratorios               ║
+║    • /bookings   - Todas las reservas                   ║
+║    • /stats      - Estadísticas                         ║
+╚══════════════════════════════════════════════════════════╝
+
+✅ API lista para recibir peticiones desde cualquier origen
+🔑 Usa el header: x-api-key: waysoft-mock-api-key-2024
+📚 Documentación disponible en: /api-docs
+  `);
 });

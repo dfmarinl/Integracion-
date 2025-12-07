@@ -1,18 +1,22 @@
 {
-  "name": "waysoft-query-api",
+  "name": "waysoft-mock-api",
   "version": "1.0.0",
-  "description": "API de solo consultas para simular Waysoft",
+  "description": "API mock para simular integración con Waysoft desde Reflex",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "node server.js"
   },
+  "keywords": ["waysoft", "mock", "api", "reflex", "integration"],
+  "author": "Reflex Integration Team",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3"
   },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }
