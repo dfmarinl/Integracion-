@@ -1,0 +1,356 @@
+[
+  {
+    "id": "WL-001",
+    "waysoft_id": "INF-LAB-001",
+    "code": "PROGRAMMING-01",
+    "name": "Laboratorio de Programación Avanzada",
+    "description": "Laboratorio equipado con estaciones de alto rendimiento para desarrollo de software, programación en múltiples lenguajes y proyectos de inteligencia artificial.",
+    "type": "computing",
+    "category": "programming",
+    "subcategory": "software_development",
+    "location": {
+      "building": "Edificio de Sistemas A",
+      "floor": "3",
+      "room": "301",
+      "address": "Carrera 45 #26-85, Bogotá"
+    },
+    "capacity": {
+      "max_students": 25,
+      "max_instructors": 2,
+      "workstations": 25,
+      "square_meters": 100
+    },
+    "equipment": {
+      "computers": [
+        { "model": "Dell Precision 7865", "quantity": 25, "specs": "AMD Ryzen Threadripper PRO, 64GB RAM, RTX 4090, 2TB NVMe" },
+        { "model": "Apple iMac 27\"", "quantity": 5, "specs": "Apple M3 Max, 32GB RAM, 1TB SSD" }
+      ],
+      "servers": [
+        { "model": "HP ProLiant DL380", "quantity": 2, "specs": "Dual Xeon, 128GB RAM, 8TB RAID" }
+      ],
+      "networking": [
+        { "model": "Cisco Catalyst 9300", "quantity": 2, "specs": "48 ports Gigabit, PoE+" }
+      ]
+    },
+    "specifications": {
+      "internet_speed": "1 Gbps simétrico",
+      "wifi_6e": true,
+      "power_backup": true,
+      "air_conditioning": true,
+      "security": ["control_access", "cameras", "fingerprint_scanner"]
+    },
+    "software": [
+      "Visual Studio 2022 Enterprise",
+      "JetBrains Suite (IntelliJ, PyCharm, WebStorm)",
+      "Docker Desktop",
+      "Python 3.11 + Anaconda",
+      "Node.js 20 + npm",
+      "Java 21 + Spring Boot"
+    ],
+    "schedule": {
+      "monday": [
+        { "start": "07:00", "end": "12:00", "type": "morning" },
+        { "start": "14:00", "end": "18:00", "type": "afternoon" }
+      ],
+      "tuesday": [
+        { "start": "07:00", "end": "12:00", "type": "morning" },
+        { "start": "14:00", "end": "18:00", "type": "afternoon" }
+      ],
+      "wednesday": [
+        { "start": "07:00", "end": "12:00", "type": "morning" },
+        { "start": "14:00", "end": "18:00", "type": "afternoon" }
+      ],
+      "thursday": [
+        { "start": "07:00", "end": "12:00", "type": "morning" },
+        { "start": "14:00", "end": "18:00", "type": "afternoon" }
+      ],
+      "friday": [
+        { "start": "07:00", "end": "12:00", "type": "morning" },
+        { "start": "14:00", "end": "18:00", "type": "afternoon" }
+      ],
+      "saturday": [
+        { "start": "08:00", "end": "14:00", "type": "morning" }
+      ],
+      "sunday": "closed"
+    },
+    "requirements": {
+      "min_participants": 1,
+      "max_participants": 25,
+      "requires_instructor": false,
+      "min_age": 16,
+      "prohibited_items": ["food", "external_hardware"]
+    },
+    "status": "available",
+    "maintenance": {
+      "last_maintenance": "2024-01-15",
+      "next_maintenance": "2024-04-15"
+    },
+    "metadata": {
+      "created_at": "2023-02-10T00:00:00Z",
+      "updated_at": "2024-01-20T10:30:00Z",
+      "rating": 4.8,
+      "total_bookings": 215
+    },
+    "contact": {
+      "manager": "Ing. Alejandro Martínez",
+      "phone": "+57 1 345 6789 ext. 301",
+      "email": "lab301@informatica.edu.co",
+      "support_hours": "07:00-22:00 L-S"
+    },
+    "features": [
+      "high_performance_pcs",
+      "dual_monitors",
+      "programming_software",
+      "ai_development",
+      "fast_internet",
+      "ergonomic_setup",
+      "air_conditioning"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop"
+    ],
+    "convention_info": {
+      "agreement_type": "academic_partnership",
+      "institution": "Universidad Nacional de Colombia",
+      "agreement_date": "2023-01-15",
+      "valid_until": "2025-12-31",
+      "contact_person": "Dra. María Fernández",
+      "contact_email": "convenios@unal.edu.co",
+      "terms": "Uso exclusivo para actividades académicas y de investigación"
+    }
+  },
+  {
+    "id": "WL-002",
+    "waysoft_id": "INF-LAB-002",
+    "code": "CYBERSEC-02",
+    "name": "Laboratorio de Ciberseguridad y Ethical Hacking",
+    "description": "Laboratorio especializado en seguridad informática, pruebas de penetración, análisis forense y protección de sistemas.",
+    "type": "computing",
+    "category": "cybersecurity",
+    "subcategory": "ethical_hacking",
+    "location": {
+      "building": "Edificio de Seguridad Digital",
+      "floor": "2",
+      "room": "210",
+      "address": "Calle 72 #11-25, Bogotá"
+    },
+    "capacity": {
+      "max_students": 20,
+      "max_instructors": 2,
+      "workstations": 20,
+      "square_meters": 90
+    },
+    "equipment": {
+      "computers": [
+        { "model": "Kali Linux Workstations", "quantity": 20, "specs": "Intel i7, 32GB RAM, 1TB SSD, RTX 3060" }
+      ],
+      "networking": [
+        { "model": "Palo Alto PA-220", "quantity": 4, "specs": "Next-Gen Firewall" }
+      ],
+      "security_devices": [
+        { "model": "WiFi Pineapple", "quantity": 5, "specs": "Wireless penetration testing" }
+      ]
+    },
+    "specifications": {
+      "internet_speed": "500 Mbps",
+      "isolated_network": true,
+      "sandbox_environment": true,
+      "power_backup": true,
+      "air_conditioning": true,
+      "security": ["biometric_access", "cameras_360", "secure_wiping"]
+    },
+    "software": [
+      "Kali Linux 2023.4",
+      "Metasploit Pro",
+      "Burp Suite Professional",
+      "Wireshark",
+      "Nmap"
+    ],
+    "schedule": {
+      "monday": [
+        { "start": "09:00", "end": "13:00", "type": "morning" },
+        { "start": "15:00", "end": "19:00", "type": "afternoon" }
+      ],
+      "tuesday": [
+        { "start": "09:00", "end": "13:00", "type": "morning" },
+        { "start": "15:00", "end": "19:00", "type": "afternoon" }
+      ],
+      "wednesday": [
+        { "start": "09:00", "end": "13:00", "type": "morning" }
+      ],
+      "thursday": [
+        { "start": "09:00", "end": "13:00", "type": "morning" },
+        { "start": "15:00", "end": "19:00", "type": "afternoon" }
+      ],
+      "friday": [
+        { "start": "09:00", "end": "13:00", "type": "morning" }
+      ],
+      "saturday": [
+        { "start": "10:00", "end": "14:00", "type": "morning" }
+      ],
+      "sunday": "closed"
+    },
+    "requirements": {
+      "min_participants": 3,
+      "max_participants": 20,
+      "requires_instructor": true,
+      "instructor_provided": true,
+      "certifications_required": ["NDA required"],
+      "min_age": 18,
+      "prohibited_items": ["mobile_phones", "recording_devices"]
+    },
+    "status": "available",
+    "maintenance": {
+      "last_maintenance": "2024-01-10",
+      "next_maintenance": "2024-02-10"
+    },
+    "metadata": {
+      "created_at": "2023-04-05T00:00:00Z",
+      "updated_at": "2024-01-18T14:45:00Z",
+      "rating": 4.9,
+      "total_bookings": 142
+    },
+    "contact": {
+      "manager": "Ing. Valeria Rodríguez",
+      "phone": "+57 1 345 6789 ext. 210",
+      "email": "lab210@informatica.edu.co",
+      "support_hours": "09:00-19:00 L-S"
+    },
+    "features": [
+      "penetration_testing",
+      "digital_forensics",
+      "network_security",
+      "web_security",
+      "ethical_hacking",
+      "certified_instructor",
+      "isolated_network"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop"
+    ],
+    "convention_info": {
+      "agreement_type": "research_partnership",
+      "institution": "Universidad de los Andes",
+      "agreement_date": "2023-03-20",
+      "valid_until": "2024-12-31",
+      "contact_person": "Dr. Carlos Gutiérrez",
+      "contact_email": "investigacion@uniandes.edu.co",
+      "terms": "Uso para investigación en ciberseguridad con supervisión"
+    }
+  },
+  {
+    "id": "WL-003",
+    "waysoft_id": "INF-LAB-003",
+    "code": "DATA-SCIENCE-01",
+    "name": "Laboratorio de Ciencia de Datos e Inteligencia Artificial",
+    "description": "Laboratorio especializado en análisis de datos, machine learning, deep learning y procesamiento de big data.",
+    "type": "computing",
+    "category": "data_science",
+    "subcategory": "ai_ml",
+    "location": {
+      "building": "Edificio de Innovación",
+      "floor": "4",
+      "room": "401",
+      "address": "Carrera 11 #93-94, Bogotá"
+    },
+    "capacity": {
+      "max_students": 15,
+      "max_instructors": 2,
+      "workstations": 15,
+      "square_meters": 85
+    },
+    "equipment": {
+      "computers": [
+        { "model": "Data Science Workstation", "quantity": 15, "specs": "AMD Ryzen 9, 128GB RAM, RTX 4090, 4TB NVMe" }
+      ],
+      "servers": [
+        { "model": "NVIDIA DGX Station", "quantity": 1, "specs": "4x Tesla V100, 256GB RAM" }
+      ]
+    },
+    "specifications": {
+      "internet_speed": "2 Gbps",
+      "gpu_compute": true,
+      "big_data_cluster": true,
+      "power_backup": true,
+      "air_conditioning": true
+    },
+    "software": [
+      "Python 3.11 + Jupyter Lab",
+      "TensorFlow 2.15 + Keras",
+      "PyTorch 2.1",
+      "scikit-learn + pandas + numpy",
+      "Apache Spark"
+    ],
+    "schedule": {
+      "monday": [
+        { "start": "08:00", "end": "12:00", "type": "morning" },
+        { "start": "14:00", "end": "18:00", "type": "afternoon" }
+      ],
+      "tuesday": [
+        { "start": "08:00", "end": "12:00", "type": "morning" },
+        { "start": "14:00", "end": "18:00", "type": "afternoon" }
+      ],
+      "wednesday": [
+        { "start": "08:00", "end": "12:00", "type": "morning" },
+        { "start": "14:00", "end": "18:00", "type": "afternoon" }
+      ],
+      "thursday": [
+        { "start": "08:00", "end": "12:00", "type": "morning" },
+        { "start": "14:00", "end": "18:00", "type": "afternoon" }
+      ],
+      "friday": [
+        { "start": "08:00", "end": "12:00", "type": "morning" },
+        { "start": "14:00", "end": "18:00", "type": "afternoon" }
+      ],
+      "saturday": [
+        { "start": "09:00", "end": "13:00", "type": "morning" }
+      ],
+      "sunday": "closed"
+    },
+    "requirements": {
+      "min_participants": 2,
+      "max_participants": 15,
+      "requires_instructor": false,
+      "min_age": 18
+    },
+    "status": "available",
+    "maintenance": {
+      "last_maintenance": "2024-01-12",
+      "next_maintenance": "2024-03-12"
+    },
+    "metadata": {
+      "created_at": "2023-06-20T00:00:00Z",
+      "updated_at": "2024-01-19T09:15:00Z",
+      "rating": 4.7,
+      "total_bookings": 98
+    },
+    "contact": {
+      "manager": "Dr. Carlos Fernández",
+      "phone": "+57 1 345 6789 ext. 401",
+      "email": "lab401@informatica.edu.co",
+      "support_hours": "08:00-18:00 L-V"
+    },
+    "features": [
+      "gpu_acceleration",
+      "big_data_processing",
+      "machine_learning",
+      "deep_learning",
+      "data_visualization",
+      "high_memory",
+      "fast_storage"
+    ],
+    "images": [
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop"
+    ],
+    "convention_info": {
+      "agreement_type": "scientific_collaboration",
+      "institution": "Universidad Javeriana",
+      "agreement_date": "2023-05-15",
+      "valid_until": "2024-12-31",
+      "contact_person": "Dra. Ana Lucía Ramírez",
+      "contact_email": "ciencia.datos@javeriana.edu.co",
+      "terms": "Colaboración en proyectos de investigación científica"
+    }
+  }
+]

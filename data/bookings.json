@@ -1,0 +1,57 @@
+[
+  {
+    "id": "WS-B001",
+    "booking_id": "WAYSOFT-2024-001",
+    "external_id": "REFLEX-BKG-001",
+    "reference_code": "WS001-REF001",
+    "lab": {
+      "id": "WL-001",
+      "waysoft_id": "INF-LAB-001",
+      "name": "Laboratorio de Programación Avanzada",
+      "code": "PROGRAMMING-01"
+    },
+    "user": {
+      "id": "reflex-user-001",
+      "waysoft_client_id": "WAYSOFT-CLIENT-001",
+      "name": "Juan Pérez Rodríguez",
+      "email": "juan.perez@reflex.com",
+      "company": "Reflex Tech Solutions"
+    },
+    "schedule": {
+      "date": "2024-02-15",
+      "start_time": "14:00",
+      "end_time": "16:00",
+      "duration_hours": 2,
+      "timezone": "America/Bogota"
+    },
+    "purpose": {
+      "category": "training",
+      "title": "Taller de Desarrollo Web con React",
+      "description": "Sesión práctica de desarrollo frontend con React 18 y TypeScript"
+    },
+    "participants": {
+      "total": 12,
+      "instructors": 1,
+      "students": 11
+    },
+    "status": "confirmed",
+    "status_history": [
+      {
+        "status": "requested",
+        "timestamp": "2024-01-10T09:30:00Z",
+        "notes": "Reserva solicitada"
+      },
+      {
+        "status": "confirmed",
+        "timestamp": "2024-01-10T10:15:00Z",
+        "notes": "Reserva confirmada por convenio"
+      }
+    ],
+    "convention_terms": {
+      "institution": "Universidad Nacional de Colombia",
+      "agreement_reference": "CONV-2023-001",
+      "responsible_professor": "Dra. María Fernández",
+      "academic_activity": true
+    }
+  }
+]
